@@ -23,13 +23,13 @@ const rootNode = 'yes';
 const mapTitle = 'My title';
 
 function outputTable(obj) {
-    function filterUnique(keys) {
+    function filterUnique(keys,totalKeys) {
         let found = false;
-        for (let i=0;i<objKeys.length;i++) {
-            if (objKeys[i].length==keys.length) {
+        for (let i=0;i<totalKeys.length;i++) {
+            if (totalKeys[i].length==keys.length) {
               let foundCounter = 0;
               for (let k=0;k<keys.length;k++) {
-                if(objKeys[i].indexOf(keys[k])>-1) { foundCounter +=1 };
+                if(totalKeys[i].indexOf(keys[k])>-1) { foundCounter +=1 };
               }
               if (foundCounter==keys.length) {
                 found = true;
@@ -57,22 +57,26 @@ function outputTable(obj) {
         }
       return res;
     }
+    function getKeys(obj) {
+      let res=[];
+        if (obj.constructor==Object){
+          for (let i=0; i< Object.keys(obj).length; i++) {
+            if (!filterUnique(Object.keys(obj)[i],res)) {
+		      res.push(Object.keys(obj)[i]); 
+		    }
+          }
+        } else if (obj.constructor==Array) {
+          for (let i=0; i<Object.keys(obj).length; i++) {
+             if (getKeys(obj[i]).length>0 && !filterUnique(getKeys(obj[i]),res)) { res.push(getKeys(obj[i])); }
+          }
+        } else { res.push(" "); }
+        return res;
+    }
 	var markdownTableRows = [];
 	var columnNumber = 0;
-	var objKeys = [];
-	for (let i=0; i< Object.keys(obj).length; i++) {
-	  if (typeof(obj[i])=="object") {
-		if (!filterUnique(Object.keys(obj[i]))) {
-		  objKeys.push(Object.keys(obj[i])); 
-		}
-	  }
-	  else {
-		if (objKeys.indexOf(" ")==-1) { 
-		  objKeys.push(" "); 
-		}
-	  }
-	}
-	if (objKeys.length==1) {
+	var objKeys = getKeys(obj);
+    if (objKeys.length==1) {
+      output.text("length 1");
       for (let i=0; i< Object.keys(obj).length; i++) {
 	    let firstCol = obj.constructor==Object? Object.keys(obj)[i]:i.toString();
 	    markdownTableRows.push("| " + firstCol + " | " + getDataStr(Object.values(obj)[i],0,false));
@@ -84,15 +88,14 @@ function outputTable(obj) {
 	  markdownTableRows.unshift(hLine);
 	  markdownTableRows.unshift("| | "+objKeys.toString().replaceAll(","," | ")+" |");
 	}
-	else {
+    else {
 	  let maxSize = 0;
       for (let i=0; i< Object.keys(obj).length; i++) {
 	    let firstCol = obj.constructor==Object? Object.keys(obj)[i]:i.toString();
 	    markdownTableRows.push("| " + firstCol + " | " + getDataStr(Object.values(obj)[i],0,true));
+        var objSize = typeof(Object.values(obj)[i])=="object"? Object.keys(Object.values(obj)[i]).length : 1;
+        maxSize = Math.max(maxSize,objSize);
       }
-	  for (let i=0;i<objKeys.length;i++) {
-		maxSize = Math.max(maxSize,objKeys[i].length);
-	  }
 	  let hLine = "|:---:|";
 	  let labels = "| |"
 	  for (let i=1;i<maxSize+1;i++) {
