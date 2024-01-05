@@ -1,13 +1,12 @@
 # SeaTable Mind map
 
-A script that allows you to visualize your data as a mind map, based on the [Airtable Extensions](https://support.airtable.com/docs/airtable-extensions-overview).
+A [SeaTable script](https://developer.seatable.io/scripts/) that allows you to visualize your data as a mind map.
 
 ## Usage
 - the mindmap.html file needs to be hosted somewhere (you can use [https://basteks.github.io/mindmap.html](https://basteks.github.io/mindmap.html) for testing purpose only)
 - the content of the seatable_mindmap.js file needs to be copied in a [new JavaScript script](https://seatable.io/en/docs/javascript-python/anlegen-und-loeschen-eines-skriptes/) or [imported](https://seatable.io/en/docs/javascript-python/import-und-export-eines-skriptes/), in your Seatable table.
 
-Once you create your Extension, access the settings page by clicking the gear icon in the top right corner
-Here are the available settings :
+Then, you will have to set the following information in the upper `//// Script configuration ////` part of the script :
 - *URL* of the mindmap.html file. The style of the map is base on the file jsmind.css but, for now, we consider, that this file is in the same folder as mindmap.html.
 - *Table* : the table containing the records you want to visualize
 - *View* : the view containing the records
